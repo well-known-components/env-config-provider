@@ -22,10 +22,17 @@
   "homepage": "https://github.com/well-known-components/env-config-provider#readme",
   "devDependencies": {
     "@microsoft/api-extractor": "^7.12.1",
+    "@types/dotenv": "^8.2.0",
+    "@types/mocha": "^8.2.0",
     "@well-known-components/interfaces": "next",
+    "expect": "^26.6.2",
+    "mocha": "^8.2.1",
+    "ts-node": "^9.1.1",
     "typescript": "latest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  },
   "peerDependencies": {
     "@well-known-components/interfaces": "^1.0.0"
   },

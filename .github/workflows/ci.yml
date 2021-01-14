@@ -14,8 +14,8 @@ jobs:
           node-version: 14.x
       - name: install
         run:  npm install
-      - name: make
-        run:  make build
+      - name: ci
+        run:  make ci
       - name: Publish
         uses: menduz/oddish-action@master
         with:

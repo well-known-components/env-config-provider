@@ -1,3 +1,4 @@
+import dotenv from "dotenv"
 import { IConfigComponent } from "@well-known-components/interfaces"
 
 // this is an attempt to monads
@@ -14,9 +15,9 @@ async function getFromMap<T>(key: string | any, map: Record<string, any>, orElse
  * @param optionMap - a dictionary to search values, usually process.env
  * @param defaultValues - default values
  */
-export function createConfigComponent<T = Record<string, any>>(
-  optionMap: Partial<T>,
-  defaultValues: Partial<T> = {}
+export function createConfigComponent(
+  optionMap: Partial<Record<string, string>>,
+  defaultValues: Partial<Record<string, string>> = {}
 ): IConfigComponent {
   return {
     async getString(name) {
@@ -62,4 +63,29 @@ export function createConfigComponent<T = Record<string, any>>(
       return r
     },
   }
+}
+
+/**
+ * Creates a simple configuration provider out of a dictionary (process.env)
+ * @public
+ * @param options - configurations for the .env file
+ * @param defaultValues - default values
+ */
+export async function createDotEnvConfigComponent(
+  options: {
+    /// file containing environment variables is located
+    path?: string
+    /// encoding
+    encoding?: string
+    // print debug information in case something happens while loading and parsing the .env file
+    debug?: boolean
+  },
+  defaultValues: Partial<Record<string, string>> = {}
+): Promise<IConfigComponent> {
+  const { error } = dotenv.config(options)
+
+  if (error) {
+    console.warn(`Warning[createDotEnvConfigComponent]: ${error}`)
+  }
+  return createConfigComponent(process.env, defaultValues)
 }
