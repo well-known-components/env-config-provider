@@ -7,14 +7,14 @@
 import { IConfigComponent } from '@well-known-components/interfaces';
 
 // @public
-export function createConfigComponent<T extends Record<string, any> = {}>(optionMap: Partial<T>, defaultValues?: Partial<T>): IConfigComponent;
+export function createConfigComponent(optionMap: Partial<Record<string, string>>, defaultValues?: Partial<Record<string, string>>): IConfigComponent;
 
 // @public
-export function createDotEnvConfigComponent<T extends Record<string, any> = {}>(options: {
+export function createDotEnvConfigComponent(options: {
     path?: string;
     encoding?: string;
     debug?: boolean;
-}, defaultValues?: Partial<T>): Promise<IConfigComponent>;
+}, defaultValues?: Partial<Record<string, string>>): Promise<IConfigComponent>;
 
 
 // (No @packageDocumentation comment for this package)
