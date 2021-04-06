@@ -11,7 +11,7 @@ export function createConfigComponent(optionMap: Partial<Record<string, string>>
 
 // @public
 export function createDotEnvConfigComponent(options: {
-    path?: string;
+    path?: string | string[];
     encoding?: string;
     debug?: boolean;
 }, defaultValues?: Partial<Record<string, string>>): Promise<IConfigComponent>;

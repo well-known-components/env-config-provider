@@ -62,4 +62,15 @@ describe("basic test cases to make sure we are not breaking things too much", fu
     const config = await createDotEnvConfigComponent({}, {})
     expect(await config.requireString("TEST_OLD")).toEqual("xyz123")
   })
+
+  it("loads several config files and overrides the values", async function () {
+    process.env = {}
+    process.env.TEST_222 = "value"
+    const config = await createDotEnvConfigComponent({ path: [".env.defaults", ".env"], debug: true }, {})
+
+    expect(await config.requireString("TEST_222")).toEqual("value")
+    expect(await config.requireString("TEST_333")).toEqual("1")
+    expect(await config.requireString("TEST_REPLACING_DEFAULT")).toEqual("123")
+    expect(await config.requireString("TEST_ONLY_DEFAULT")).toEqual("1")
+  })
 })

@@ -67,6 +67,12 @@ export function createConfigComponent(
 
 /**
  * Creates a simple configuration provider out of a dictionary (process.env)
+ * All previously existing environment variables will not be replaced by the
+ * .env contents.
+ *
+ * "path" can be an array of strings, the values will be overwritten
+ * in the order of parsing
+ *
  * @public
  * @param options - configurations for the .env file
  * @param defaultValues - default values
@@ -74,7 +80,7 @@ export function createConfigComponent(
 export async function createDotEnvConfigComponent(
   options: {
     /// file containing environment variables is located
-    path?: string
+    path?: string | string[]
     /// encoding
     encoding?: string
     // print debug information in case something happens while loading and parsing the .env file
@@ -82,10 +88,37 @@ export async function createDotEnvConfigComponent(
   },
   defaultValues: Partial<Record<string, string>> = {}
 ): Promise<IConfigComponent> {
-  const { error } = dotenv.config(options)
+  const paths = Array.isArray(options.path) ? options.path : [options.path || ".env"]
+  const initialSetOfKeys = new Set(Object.keys(process.env))
 
-  if (error) {
-    console.warn(`Warning[createDotEnvConfigComponent]: ${error}`)
+  const parsedValues: Record<string, string> = {}
+
+  for (const path of paths) {
+    if (options.debug) {
+      console.log(`loading path ${path}`)
+    }
+
+    const { error, parsed } = dotenv.config({ ...options, path })
+
+    if (error) {
+      console.warn(`Warning[createDotEnvConfigComponent]: ${error}`)
+    }
+
+    if (parsed) {
+      console.log(parsed)
+      Object.assign(parsedValues, parsed)
+    }
   }
+
+  for (let [key, value] of Object.entries(parsedValues)) {
+    if (initialSetOfKeys.has(key)) {
+      if (options.debug) {
+        console.log(`Env var ${key} is present. Skipping .env override`)
+      }
+    } else {
+      process.env[key] = value
+    }
+  }
+
   return createConfigComponent(process.env, defaultValues)
 }
