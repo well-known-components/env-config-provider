@@ -1,0 +1,32 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@microsoft/api-extractor"
+    versions:
+    - 7.13.1
+    - 7.13.2
+    - 7.13.3
+    - 7.13.4
+    - 7.13.5
+  - dependency-name: "@well-known-components/interfaces"
+    versions:
+    - 1.0.0-20210207162431.commit-fe90f75
+    - 1.0.1-20210408161043.commit-8b5c07c
+  - dependency-name: mocha
+    versions:
+    - 8.3.0
+    - 8.3.1
+  - dependency-name: typescript
+    versions:
+    - 4.1.4
+    - 4.1.5
+    - 4.2.2
+    - 4.2.3
+  - dependency-name: "@types/mocha"
+    versions:
+    - 8.2.1
