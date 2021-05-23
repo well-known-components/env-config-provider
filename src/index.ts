@@ -105,7 +105,6 @@ export async function createDotEnvConfigComponent(
     }
 
     if (parsed) {
-      console.log(parsed)
       Object.assign(parsedValues, parsed)
     }
   }
