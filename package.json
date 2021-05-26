@@ -25,7 +25,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/mocha": "^8.2.0",
     "@well-known-components/interfaces": "next",
-    "expect": "^26.6.2",
+    "expect": "^27.0.1",
     "mocha": "^8.2.1",
     "ts-node": "^9.1.1",
     "typescript": "latest"
