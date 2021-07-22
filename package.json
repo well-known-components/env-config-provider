@@ -23,7 +23,7 @@
   "devDependencies": {
     "@microsoft/api-extractor": "^7.12.1",
     "@types/dotenv": "^8.2.0",
-    "@types/mocha": "^8.2.0",
+    "@types/mocha": "^9.0.0",
     "@well-known-components/interfaces": "next",
     "expect": "^26.6.2",
     "mocha": "^8.2.1",
