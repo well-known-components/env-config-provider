@@ -31,7 +31,7 @@
     "typescript": "latest"
   },
   "dependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^16.0.1"
   },
   "peerDependencies": {
     "@well-known-components/interfaces": "^1.0.0"
