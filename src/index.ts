@@ -2,11 +2,57 @@ import dotenv from "dotenv"
 import { IConfigComponent } from "@well-known-components/interfaces"
 
 // this is an attempt to monads
-async function getFromMap<T>(key: string | any, map: Record<string, any>, orElse: () => Promise<T> | T) {
+async function getFromMap<T>(key: string | any, map: Record<string, any>) {
   if (map.hasOwnProperty(key)) {
     return map[key]
   }
-  return await orElse()
+  return undefined
+}
+
+/**
+ * Creates a composed config provider, using the provided order, getting configurations
+ * will cascade to the next provider if the result is undefined
+ * @public
+ */
+export function composeConfigProviders(...providers: IConfigComponent[]): IConfigComponent {
+  return {
+    async getString(name) {
+      for (const provider of providers) {
+        const value = await provider.getString(name)
+
+        if (value !== undefined) return value
+      }
+
+      return undefined
+    },
+    async getNumber(name) {
+      for (const provider of providers) {
+        const value = await provider.getNumber(name)
+
+        if (value !== undefined) return value
+      }
+
+      return undefined
+    },
+    async requireString(name) {
+      for (const provider of providers) {
+        const value = await provider.getString(name)
+
+        if (value !== undefined) return value
+      }
+
+      throw new Error("Configuration: string " + name + " is required")
+    },
+    async requireNumber(name) {
+      for (const provider of providers) {
+        const value = await provider.getNumber(name)
+
+        if (value !== undefined) return value
+      }
+
+      throw new Error("Configuration: string " + name + " is required")
+    },
+  }
 }
 
 /**
@@ -17,11 +63,26 @@ async function getFromMap<T>(key: string | any, map: Record<string, any>, orElse
  */
 export function createConfigComponent(
   optionMap: Partial<Record<string, string>>,
-  defaultValues: Partial<Record<string, string>> = {}
+  defaultValues?: Partial<Record<string, string>>
 ): IConfigComponent {
+  const config = createRecordConfigComponent(optionMap)
+
+  if (defaultValues) {
+    return composeConfigProviders(config, createRecordConfigComponent(defaultValues))
+  }
+
+  return config
+}
+
+/**
+ * Creates a simple configuration provider out of a dictionary (process.env)
+ * @public
+ * @param optionMap - a dictionary to search values, usually process.env
+ */
+export function createRecordConfigComponent(optionMap: Partial<Record<string, string>>): IConfigComponent {
   return {
     async getString(name) {
-      const value = await getFromMap(name, optionMap, () => getFromMap(name, defaultValues, () => undefined))
+      const value = await getFromMap(name, optionMap)
 
       if (typeof value !== "string" && value !== undefined) {
         throw new Error(`Configuration: config "${name}" should be a string, got ${typeof value} instead`)
@@ -30,7 +91,7 @@ export function createConfigComponent(
       return value
     },
     async getNumber(name) {
-      const value = await getFromMap(name, optionMap, () => getFromMap(name, defaultValues, () => undefined))
+      const value = await getFromMap(name, optionMap)
 
       if (value != undefined && value !== null) {
         const numValue = parseFloat(value)
@@ -86,7 +147,7 @@ export async function createDotEnvConfigComponent(
     // print debug information in case something happens while loading and parsing the .env file
     debug?: boolean
   },
-  defaultValues: Partial<Record<string, string>> = {}
+  defaultValues?: Partial<Record<string, string>>
 ): Promise<IConfigComponent> {
   const paths = Array.isArray(options.path) ? options.path : [options.path || ".env"]
   const initialSetOfKeys = new Set(Object.keys(process.env))

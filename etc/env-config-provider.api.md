@@ -7,6 +7,9 @@
 import { IConfigComponent } from '@well-known-components/interfaces';
 
 // @public
+export function composeConfigProviders(...providers: IConfigComponent[]): IConfigComponent;
+
+// @public
 export function createConfigComponent(optionMap: Partial<Record<string, string>>, defaultValues?: Partial<Record<string, string>>): IConfigComponent;
 
 // @public
@@ -16,6 +19,8 @@ export function createDotEnvConfigComponent(options: {
     debug?: boolean;
 }, defaultValues?: Partial<Record<string, string>>): Promise<IConfigComponent>;
 
+// @public
+export function createRecordConfigComponent(optionMap: Partial<Record<string, string>>): IConfigComponent;
 
 // (No @packageDocumentation comment for this package)
 
