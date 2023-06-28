@@ -1,4 +1,3 @@
-import expect from "expect"
 import { createConfigComponent, createDotEnvConfigComponent } from "../src/index"
 
 describe("basic test cases to make sure we are not breaking things too much", function () {
